@@ -1,4 +1,5 @@
 import '/auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -226,7 +227,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               controller: _model.emailAddressController,
                               obscureText: false,
                               decoration: InputDecoration(
-                                labelText: 'Email Address',
+                                labelText: 'EMAIL ADDRESS',
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
@@ -305,7 +306,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               controller: _model.passwordController,
                               obscureText: !_model.passwordVisibility,
                               decoration: InputDecoration(
-                                labelText: 'Password',
+                                labelText: 'PASSWORD',
                                 labelStyle: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
@@ -314,7 +315,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.normal,
                                     ),
-                                hintText: 'Enter your email here...',
+                                hintText: 'Enter your Password here...',
                                 hintStyle: FlutterFlowTheme.of(context)
                                     .bodySmall
                                     .override(
@@ -394,7 +395,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           controller: _model.passwordConfirmController,
                           obscureText: !_model.passwordConfirmVisibility,
                           decoration: InputDecoration(
-                            labelText: 'Confirm Password',
+                            labelText: 'CONFIRM PASSWORD',
                             labelStyle:
                                 FlutterFlowTheme.of(context).bodySmall.override(
                                       fontFamily: 'Outfit',
@@ -402,7 +403,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.normal,
                                     ),
-                            hintText: 'Enter your email here...',
+                            hintText: 'Enter your Password here...',
                             hintStyle:
                                 FlutterFlowTheme.of(context).bodySmall.override(
                                       fontFamily: 'Outfit',
@@ -502,6 +503,14 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               if (user == null) {
                                 return;
                               }
+
+                              final usersCreateData = createUsersRecordData(
+                                uid: _model.usernameController.text,
+                                phoneNumber: _model.phonenumController.text,
+                              );
+                              await UsersRecord.collection
+                                  .doc(user.uid)
+                                  .update(usersCreateData);
 
                               context.pushNamedAuth('login', mounted);
                             },
