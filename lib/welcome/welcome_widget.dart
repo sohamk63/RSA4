@@ -21,6 +21,11 @@ class _WelcomeWidgetState extends State<WelcomeWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
+  int get pageViewCurrentIndex => _model.pageViewController != null &&
+          _model.pageViewController!.hasClients &&
+          _model.pageViewController!.page != null
+      ? _model.pageViewController!.page!.round()
+      : 0;
 
   @override
   void initState() {
@@ -38,28 +43,28 @@ class _WelcomeWidgetState extends State<WelcomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Color(0xFFF1F4F8),
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
+      child: Scaffold(
+        key: scaffoldKey,
         backgroundColor: Color(0xFFF1F4F8),
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Welcome!',
-          style: FlutterFlowTheme.of(context).displaySmall.override(
-                fontFamily: 'Outfit',
-                color: Color(0xFF0F1113),
-                fontSize: 34.0,
-                fontWeight: FontWeight.w500,
-              ),
+        appBar: AppBar(
+          backgroundColor: Color(0xFFF1F4F8),
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Welcome!',
+            style: FlutterFlowTheme.of(context).displaySmall.override(
+                  fontFamily: 'Outfit',
+                  color: Color(0xFF0F1113),
+                  fontSize: 34.0,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
+          actions: [],
+          centerTitle: false,
+          elevation: 0.0,
         ),
-        actions: [],
-        centerTitle: false,
-        elevation: 0.0,
-      ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
+        body: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -260,8 +265,8 @@ class _WelcomeWidgetState extends State<WelcomeWidget> {
                                 PageController(initialPage: 0),
                             count: 3,
                             axisDirection: Axis.horizontal,
-                            onDotClicked: (i) {
-                              _model.pageViewController!.animateToPage(
+                            onDotClicked: (i) async {
+                              await _model.pageViewController!.animateToPage(
                                 i,
                                 duration: Duration(milliseconds: 500),
                                 curve: Curves.ease,

@@ -1,4 +1,4 @@
-import '/auth/auth_util.dart';
+import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -21,6 +21,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
+  LatLng? currentUserLocationValue;
 
   @override
   void initState() {
@@ -44,12 +45,12 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: Colors.white,
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
-        child: SingleChildScrollView(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -482,6 +483,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         children: [
                           FFButtonWidget(
                             onPressed: () async {
+                              currentUserLocationValue =
+                                  await getCurrentUserLocation(
+                                      defaultLocation: LatLng(0.0, 0.0));
                               GoRouter.of(context).prepareAuthEvent();
                               if (_model.passwordController.text !=
                                   _model.passwordConfirmController.text) {
@@ -495,7 +499,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 return;
                               }
 
-                              final user = await createAccountWithEmail(
+                              final user =
+                                  await authManager.createAccountWithEmail(
                                 context,
                                 _model.emailAddressController.text,
                                 _model.passwordController.text,
@@ -505,8 +510,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               }
 
                               final usersCreateData = createUsersRecordData(
-                                uid: _model.usernameController.text,
-                                phoneNumber: _model.phonenumController.text,
+                                location: currentUserLocationValue,
                               );
                               await UsersRecord.collection
                                   .doc(user.uid)
