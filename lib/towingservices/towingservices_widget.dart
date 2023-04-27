@@ -91,7 +91,7 @@ class _TowingservicesWidgetState extends State<TowingservicesWidget> {
                       onCameraIdle: (latLng) =>
                           _model.googleMapsCenter = latLng,
                       initialLocation: _model.googleMapsCenter ??=
-                          LatLng(13.106061, -59.613158),
+                          LatLng(15.5124, 73.786827),
                       markers: [
                         if (_googleMapMarker != null)
                           FlutterFlowMarker(
@@ -105,7 +105,7 @@ class _TowingservicesWidgetState extends State<TowingservicesWidget> {
                       initialZoom: 14.0,
                       allowInteraction: true,
                       allowZoom: true,
-                      showZoomControls: true,
+                      showZoomControls: false,
                       showLocation: true,
                       showCompass: false,
                       showMapToolbar: false,
