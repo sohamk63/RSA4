@@ -21,7 +21,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
-  LatLng? currentUserLocationValue;
 
   @override
   void initState() {
@@ -483,9 +482,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                         children: [
                           FFButtonWidget(
                             onPressed: () async {
-                              currentUserLocationValue =
-                                  await getCurrentUserLocation(
-                                      defaultLocation: LatLng(0.0, 0.0));
                               GoRouter.of(context).prepareAuthEvent();
                               if (_model.passwordController.text !=
                                   _model.passwordConfirmController.text) {
@@ -510,7 +506,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                               }
 
                               final usersCreateData = createUsersRecordData(
-                                location: currentUserLocationValue,
+                                uid: _model.usernameController.text,
+                                phoneNumber: _model.phonenumController.text,
                               );
                               await UsersRecord.collection
                                   .doc(user.uid)

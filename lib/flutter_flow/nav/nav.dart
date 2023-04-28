@@ -105,9 +105,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         FFRoute(
           name: 'towingservices',
           path: '/towingservices',
-          builder: (context, params) => TowingservicesWidget(
-            location: params.getParam('location', ParamType.LatLng),
-          ),
+          builder: (context, params) => TowingservicesWidget(),
         ),
         FFRoute(
           name: 'petrolpumps',

@@ -1,4 +1,4 @@
-import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_google_map.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -10,12 +10,7 @@ import 'towingservices_model.dart';
 export 'towingservices_model.dart';
 
 class TowingservicesWidget extends StatefulWidget {
-  const TowingservicesWidget({
-    Key? key,
-    this.location,
-  }) : super(key: key);
-
-  final LatLng? location;
+  const TowingservicesWidget({Key? key}) : super(key: key);
 
   @override
   _TowingservicesWidgetState createState() => _TowingservicesWidgetState();
@@ -26,11 +21,15 @@ class _TowingservicesWidgetState extends State<TowingservicesWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
+  LatLng? currentUserLocationValue;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => TowingservicesModel());
+
+    getCurrentUserLocation(defaultLocation: LatLng(0.0, 0.0), cached: true)
+        .then((loc) => setState(() => currentUserLocationValue = loc));
   }
 
   @override
@@ -43,6 +42,21 @@ class _TowingservicesWidgetState extends State<TowingservicesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (currentUserLocationValue == null) {
+      return Container(
+        color: FlutterFlowTheme.of(context).primaryBackground,
+        child: Center(
+          child: SizedBox(
+            width: 50.0,
+            height: 50.0,
+            child: CircularProgressIndicator(
+              color: FlutterFlowTheme.of(context).primary,
+            ),
+          ),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
       child: Scaffold(
@@ -83,36 +97,62 @@ class _TowingservicesWidgetState extends State<TowingservicesWidget> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
-                child: AuthUserStreamWidget(
-                  builder: (context) => Builder(builder: (context) {
-                    final _googleMapMarker = currentUserDocument!.location;
-                    return FlutterFlowGoogleMap(
-                      controller: _model.googleMapsController,
-                      onCameraIdle: (latLng) =>
-                          _model.googleMapsCenter = latLng,
-                      initialLocation: _model.googleMapsCenter ??=
-                          LatLng(15.5124, 73.786827),
-                      markers: [
-                        if (_googleMapMarker != null)
-                          FlutterFlowMarker(
-                            _googleMapMarker.serialize(),
-                            _googleMapMarker,
+                child: StreamBuilder<List<UsersRecord>>(
+                  stream: queryUsersRecord(
+                    singleRecord: true,
+                  ),
+                  builder: (context, snapshot) {
+                    // Customize what your widget looks like when it's loading.
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: SizedBox(
+                          width: 50.0,
+                          height: 50.0,
+                          child: CircularProgressIndicator(
+                            color: FlutterFlowTheme.of(context).primary,
                           ),
-                      ],
-                      markerColor: GoogleMarkerColor.violet,
-                      mapType: MapType.normal,
-                      style: GoogleMapStyle.standard,
-                      initialZoom: 14.0,
-                      allowInteraction: true,
-                      allowZoom: true,
-                      showZoomControls: false,
-                      showLocation: true,
-                      showCompass: false,
-                      showMapToolbar: false,
-                      showTraffic: false,
-                      centerMapOnMarkerTap: true,
-                    );
-                  }),
+                        ),
+                      );
+                    }
+                    List<UsersRecord> googleMapUsersRecordList = snapshot.data!;
+                    // Return an empty Container when the item does not exist.
+                    if (snapshot.data!.isEmpty) {
+                      return Container();
+                    }
+                    final googleMapUsersRecord =
+                        googleMapUsersRecordList.isNotEmpty
+                            ? googleMapUsersRecordList.first
+                            : null;
+                    return Builder(builder: (context) {
+                      final _googleMapMarker = currentUserLocationValue;
+                      return FlutterFlowGoogleMap(
+                        controller: _model.googleMapsController,
+                        onCameraIdle: (latLng) =>
+                            _model.googleMapsCenter = latLng,
+                        initialLocation: _model.googleMapsCenter ??=
+                            LatLng(13.188, -59.613158),
+                        markers: [
+                          if (_googleMapMarker != null)
+                            FlutterFlowMarker(
+                              _googleMapMarker.serialize(),
+                              _googleMapMarker,
+                            ),
+                        ],
+                        markerColor: GoogleMarkerColor.blue,
+                        mapType: MapType.normal,
+                        style: GoogleMapStyle.standard,
+                        initialZoom: 14.0,
+                        allowInteraction: true,
+                        allowZoom: false,
+                        showZoomControls: false,
+                        showLocation: true,
+                        showCompass: false,
+                        showMapToolbar: false,
+                        showTraffic: false,
+                        centerMapOnMarkerTap: true,
+                      );
+                    });
+                  },
                 ),
               ),
             ],
